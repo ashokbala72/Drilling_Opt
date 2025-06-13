@@ -14,79 +14,74 @@ st.set_page_config(page_title="Drilling Optimization Assistant", layout="wide")
 st.markdown("## Drilling Optimization Assistant")
 
 # Define tabs
-(
-    overview_tab,
-    realtime_tab,
-    tuning_tab,
-    bitwear_tab,
-    cost_tab,
-    feed_tab,
-    dashboard_tab,
-    recommendation_tab,
-    ask_tab
-) = st.tabs([
-    "📌 Overview",
-    "🛠️ Real-Time Drilling View",
-    "🎛️ Auto Parameter Tuning",
-    "🪓 Bit Wear Monitoring",
-    "💰 Efficiency & Cost Tracker",
-    "🔄 Real-Time Data Feed",
-    "📊 Performance Dashboard",
-    "📌 GenAI Recommendations",
-    "❓ Ask a Query"
-])
+(overview_tab, realtime_tab, tuning_tab, bitwear_tab, cost_tab, dashboard_tab, recommendation_tab, ask_tab) = st.tabs(["📌 Overview", "🛠️ Unified Real-Time Drilling", "🎛️ Auto Parameter Tuning", "🪓 Bit Wear Monitoring", "💰 Efficiency & Cost Tracker", "📊 Performance Dashboard", "📌 GenAI Recommendations", "❓ Ask a Query"])
+
+
+
 
 
 with overview_tab:
     st.header("📌 Overview: Drilling Optimization Assistant")
-
     st.markdown("""
-### 🔍 What This App Does:
-
-This assistant provides real-time and AI-enhanced insights across different aspects of a drilling operation using live or simulated sensor data.
-
-#### 📊 Tab Guide:
-- **🛠️ Real-Time Drilling View** – Live visualization of drilling parameters (ROP, WOB, RPM, Torque, Mud Flow), with GenAI suggestions.
-- **🎛️ Auto Parameter Tuning** – Shows AI-suggested adjustments to improve drilling efficiency (e.g., WOB, RPM, Mud Flow).
-- **🪓 Bit Wear Monitoring** – Displays bit wear levels and torque with trend graph and alerts.
-- **💰 Efficiency & Cost Tracker** – Tracks cost per foot, NPT hours, and fuel usage along with visual KPIs.
-- **🔄 Real-Time Data Feed** – Simulated sensor feed of WOB, RPM, Torque with GenAI interpretation.
-- **📊 Performance Dashboard** – High-level KPIs showing stability, ROP variance, and downtime.
-- **📌 GenAI Recommendations** – Consolidated AI-generated insights based on real-time data across the app.
-- **❓ Ask a Query** – Free-form GenAI interface that answers user questions using all sensor data and system state.
+This assistant helps drilling engineers and field operators monitor and optimize drilling operations using AI-powered insights and sensor data. It supports real-time monitoring, fault detection, cost optimization, and GenAI-driven decision support.
 
 ---
 
-### 🚀 How to Deploy This System in Production (Layman Steps):
+### 🔍 Data Sources: Mock vs Real-Time
 
-1. **Prepare the Data Feed:**
-   - Connect real-time sensor data APIs or SCADA systems (instead of simulated CSVs).
-   - Ensure timestamps and sensor labels match expected format (WOB, RPM, etc.).
+- **Currently Simulated (Mock) Data**:
+  - Sensor readings like WOB, Torque, RPM, Mud Flow, Bit Depth, Bit Wear, etc.
+  - Fuel usage, cost per foot, and non-productive time (NPT) are simulated.
+  - GenAI recommendations are generated live using the simulated context.
 
-2. **Secure the Environment:**
-   - Store your OpenAI API key securely (e.g., environment variables or secrets manager).
-   - Use HTTPS endpoints and authentication for accessing drilling data.
+- **Can Be Made Real-Time By**:
+  - Integrating rig SCADA systems, WITSML feeds, or APIs (e.g., AWS IoT, Azure IoT Hub)
+  - Replacing internal simulator with data ingestion pipelines or sockets
+  - Connecting formation logs, bit sensors, or BHA instrumentation feeds
 
-3. **Deploy the Application:**
-   - Use a platform like **Streamlit Community Cloud**, **Heroku**, **AWS EC2**, or **Azure App Services**.
-   - Install required Python libraries using `requirements.txt`.
+---
 
-4. **Enable Monitoring:**
-   - Add logging, health checks, and exception handling for GenAI and data ingestion.
-   - Use dashboards to visualize latency or API failures.
+### 📋 What Each Tab Does (in Layman Terms)
 
-5. **Test with Real Data:**
-   - Begin with a sandbox data set from your operations team.
-   - Tune thresholds and alerts based on real-world drilling outcomes.
+**🛠️ Unified Real-Time Drilling View**  
+Shows live trends for Weight on Bit, Torque, RPM, Mud Flow, and Bit Depth.  
+👉 Flags problems like:
+- High Torque (bit stuck or hard formation)
+- Low Mud Flow (potential pump failure)
+- Sudden ROP drops (inefficient drilling)
 
-6. **Train Your Team:**
-   - Explain what each tab shows, how to interpret GenAI insights.
-   - Create workflows to act on recommendations (bit replacement, parameter tuning, etc.).
+**🎛️ Auto Parameter Tuning**  
+Automatically compares your actual drilling settings with ideal AI-tuned values.  
+👉 Helps reduce wear, fuel, and improve penetration rate.
 
-7. **Iterate & Improve:**
-   - Gather feedback from field engineers and drilling analysts.
-   - Add new features like report export, mobile views, or multi-site comparisons.
-    """)
+**🪓 Bit Wear Monitoring**  
+Tracks how much the drill bit has worn out and when to replace it.  
+👉 Prevents breakdowns and reduces risk of tool failure in-hole.
+
+**💰 Efficiency & Cost Tracker**  
+Shows the cost per foot drilled, fuel use, and how much time was lost (NPT).  
+👉 Makes it easy to control budget and justify downtime.
+
+**📊 Performance Dashboard**  
+Visual summary of overall system performance using KPIs like:
+- ROP Variance: Is drilling smooth or inconsistent?
+- Stability Index: Is the drill string stable?
+- NPT %: How much time is being lost?
+
+**📌 GenAI Recommendations**  
+Uses GPT to generate smart suggestions like:
+👉 “Increase RPM slightly to match formation hardness”  
+👉 “Consider bit replacement within next 500 ft”
+
+**❓ Ask a Query**  
+Type a question (e.g., “Why is torque increasing suddenly?”)  
+👉 Get an AI-generated explanation based on current data.
+
+---
+
+### 🛠️ Deployment Note:
+Use the drilling type selector (Oil & Gas, Mining, Geothermal) to adapt the assistant for different scenarios. All tabs support both mock and real-time integration depending on feed availability.
+""")
 
 with realtime_tab:
     st.title("🛠️ Unified Drilling Optimization Assistant")
@@ -184,65 +179,6 @@ with cost_tab:
     })
     fig = px.bar(cost_data, x="Metric", y="Value", title="Efficiency & Cost Metrics")
     st.plotly_chart(fig, use_container_width=True)
-
-
-
-
-
-with feed_tab:
-    st.subheader("🔄 Real-Time Data Feed")
-
-    if "feed_history" not in st.session_state:
-        now = pd.Timestamp.now()
-        st.session_state.feed_history = [
-            {
-                "WOB": random.randint(18000, 23000),
-                "RPM": random.randint(110, 150),
-                "Torque": random.randint(17000, 21000),
-                "Timestamp": now - pd.Timedelta(seconds=50 - 5 * i)
-            }
-            for i in range(10)
-        ]
-
-    df_feed = pd.DataFrame(st.session_state.feed_history)
-    st.dataframe(df_feed)
-
-
-
-    
-    st.subheader("🧠 GenAI Interpretation")
-    insight_prompt = f"""Current drilling sensor readings:
-
-- WOB: {latest.get('WOB', 22000)} lbs
-- RPM: {latest.get('RPM', 130)}
-- Torque: {latest.get('Torque', 21000)} ft-lbf
-
-Provide insights into current operational efficiency and risks.
-Suggest improvements based on these values.
-"""
-    if st.button("🧠 Get GenAI Insight"):
-        try:
-            client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
-            with st.spinner("Analyzing..."):
-                response = client.chat.completions.create(
-                    model="gpt-3.5-turbo",
-                    messages=[{"role": "user", "content": insight_prompt}]
-                )
-                st.success("✅ AI Insight Ready")
-                st.markdown(response.choices[0].message.content)
-        except Exception as e:
-            st.error(f"❌ GenAI failed: {str(e)}")
-
-    latest = df_feed.iloc[-1]
-    st.write(f"**Latest Readings:** WOB: {latest.get('WOB', 22000)} lbs | RPM: {latest.get('RPM', 130)} | Torque: {latest.get('Torque', 21000)} ft-lbf")
-
-    if latest["Torque"] > 20000:
-        st.error("⚠️ Torque high – risk of overloading motor.")
-    else:
-        st.success("✅ Feed within expected range.")
-
-
-
 with dashboard_tab:
     st.subheader("📊 Performance Dashboard")
     st.metric("ROP Variance", "Low")
